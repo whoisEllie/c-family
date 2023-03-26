@@ -5,7 +5,7 @@
 
 #define CHARLIMIT 40 
 
-// the pig function is a heavily modified version of an answer found at: https://stackoverflow.com/questions/37176442/translating-a-sentence-to-pig-latin-in-c
+// The pig function is a heavily modified version of an answer found at: https://stackoverflow.com/questions/37176442/translating-a-sentence-to-pig-latin-in-c
 
 char vowels[6] = {'a', 'e', 'i', 'o', 'u', 'y'};
 
@@ -64,5 +64,9 @@ char *pig (char *word)
 			// Appending "way" 
 		 	*pig++ = 'w', *pig++ = 'a', *pig++ = 'y', *pig = 0;
 		}
+
+		// Clean up
+		free(suffix);
+
 		return piglatin;
 }

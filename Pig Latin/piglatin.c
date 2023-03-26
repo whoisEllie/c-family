@@ -1,4 +1,6 @@
 #include "pig.c"
+#include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define BUFFERSIZE 200 
@@ -35,12 +37,16 @@ int main()
 			word = strtok(sentence, delimiter);
 
 			while (word != NULL) {
+
+				char* outWord = pig(word);
 				
 				if (DRAWDETAILEDCONVERSIONS) {
-					printf("%s => %s\n", word, pig(word));
+					printf("%s => %s\n", word, outWord);
 				}
 
-				sprintf(pigLatinOutput + strlen(pigLatinOutput), "%s ", pig(word));
+				sprintf(pigLatinOutput + strlen(pigLatinOutput), "%s ", outWord);
+
+				free(outWord);
 
 				word = strtok(NULL, delimiter);
 			}
