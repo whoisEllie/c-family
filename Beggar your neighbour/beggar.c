@@ -70,17 +70,25 @@ int pop(Player* player)
 struct pile_struct* take_turn(Player* player, Pile* deck)
 {
 	// Check for 0!
-	int topCard = 0;
+	int topCard = -10;
 	if (deck->pileSize > 0) {
 		topCard = deck->pile[deck->pileSize-1];
 	}
 	if (is_penalty_card(topCard)) {
 		for (int i = 0; i < (topCard - 10); i++) {
-			int nextCard = pop(player);
-			deck->pile[deck->pileSize] = nextCard;
-			deck->pileSize += 1;
-			if (nextCard > 10) {
-				return NULL;	
+			if (player->handSize > 0) {
+				int nextCard = pop(player);
+				if (nextCard == 0) {
+					return NULL;	
+				}
+				deck->pile[deck->pileSize] = nextCard;
+				deck->pileSize += 1;
+				if (nextCard > 10) {
+					return NULL;	
+				}
+			}
+			else {
+			 return NULL;
 			}
 		}
 		return deck;
@@ -162,6 +170,8 @@ int beggar(int Nplayers, Pile *deck, int talkative)
 		printf("\n");
 	}
 
+	free(cardSplit);
+
 	// Clearing the deck 
 	memset(deck->pile, 0, 52 * sizeof(int));
 	deck->pileSize = 0;
@@ -227,21 +237,68 @@ int beggar(int Nplayers, Pile *deck, int talkative)
 		finishLoop = finished(players, Nplayers); 
 	}
 
+	// Printing the final state of the pile and hands
+
+	printf("\nFinal result:\n\n");
+
+	// Debug printing the pile
+	printf("Final pile: ");
+	for (int i = 0; i < deck->pileSize; i++) {
+		printf("%d, ", deck->pile[i]);	
+	}
+	printf("\n");
+
+	// Debug printing the hands of each player
+	for (int k = 0; k < Nplayers; k++) {
+		if (k == playerIndex) {
+			printf("   %d: ", k);
+		}
+		else {
+			printf("   %d: ", k);
+		}
+		for (int n = 0; n < players[k].handSize; n++) {
+			printf("%d ", players[k].hand[n]);	
+		}
+		printf("\n");
+	}
+
+	for (int i = 0; i < Nplayers; i++) {
+		free(players[i].hand);
+	}
+	free(players);
+	free(deck);
 	return 0;
 }
 
-
-int main(int argv, char* argc[])
+int main(int argc, char* argv[])
 {
-	Pile* cardPile = malloc(sizeof(Pile));
-	cardPile->pile = malloc(52 * sizeof(int));
-	int deck[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+	if (argc == 2) {
 
-	// Shuffle deck
-	shuffle(deck, 52, time(NULL));	
+		// Create the pile struct
+		Pile* cardPile = malloc(sizeof(Pile));
 
-	cardPile->pile = deck;
-	cardPile->pileSize = 52;
+		// Allocate memory for the pile
+		cardPile->pile = malloc(52 * sizeof(int));
 
-	beggar(4, cardPile, 1);
+		// Create the deck
+		int deck[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+
+		// Shuffle deck
+		shuffle(deck, 52, time(NULL));	
+
+		// ALlocate the pile to the shuffled deck and update it's size
+		cardPile->pile = deck;
+		cardPile->pileSize = 52;
+
+		if (atof(argv[1])) {
+			int players = atoi(argv[1]);
+			// Play the game
+			beggar(players, cardPile, 1);
+			//fscanf(stdin, "c"); // wait for user to enter input from keyboard
+			return 0;
+		}
+
+		printf("Something went wrong, please try entering the correct arguments\n");
+		return 1;
+	}
 }
