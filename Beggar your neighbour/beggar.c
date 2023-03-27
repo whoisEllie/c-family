@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,8 +30,14 @@ int finished(Player* players, int Nplayers)
 			continue;	
 		}
 		else {
+			return 0;
 		}
 	}
+	
+	if (fullCount == 1) {
+		return 1;	
+	}
+
 	return 0;
 }
 
@@ -62,26 +69,25 @@ int pop(Player* player)
 
 struct pile_struct* take_turn(Player* player, Pile* deck)
 {
-	printf("Size: %d\n", deck->pileSize);
 	// Check for 0!
 	int topCard = 0;
 	if (deck->pileSize > 0) {
 		topCard = deck->pile[deck->pileSize-1];
 	}
-	printf("%d\n", topCard);
 	if (is_penalty_card(topCard)) {
 		for (int i = 0; i < (topCard - 10); i++) {
-			//add stuff	
+			int nextCard = pop(player);
+			deck->pile[deck->pileSize] = nextCard;
+			deck->pileSize += 1;
+			if (nextCard > 10) {
+				return NULL;	
+			}
 		}
-		// If it is a penalty card, lay down the relevant number of cards
-		// 		If we find a penalty card, lay it down and exit
-		// 		If not, return the pile
 		return deck;
 	}
 	else {
-		// Insert the newly discarded card
+		// Play card
 		int playerTopCard = pop(player); 
-		printf("Appending %d to deck.\n", playerTopCard);
 		deck->pile[deck->pileSize] = playerTopCard;
 		deck->pileSize += 1;
 		return NULL;
@@ -95,6 +101,16 @@ int get_next_player(int currentPlayer, int Nplayers)
 	}
 	else {
 		return 0;
+	}
+}
+
+int get_previous_player(int currentPlayer, int Nplayers)
+{
+	if (currentPlayer == 0) {
+		return Nplayers-1;
+	}
+	else {
+		return currentPlayer-1;
 	}
 }
 
@@ -124,6 +140,7 @@ int beggar(int Nplayers, Pile *deck, int talkative)
 	Player* players = malloc(sizeof(Player) * Nplayers);
 	for (int i = 0; i < Nplayers; i++) {
 		players[i].hand = malloc(52 * sizeof(int));
+		players[i].id = i;
 	}
 
 	int* cardSplit = divideCards(Nplayers);	
@@ -149,27 +166,65 @@ int beggar(int Nplayers, Pile *deck, int talkative)
 	memset(deck->pile, 0, 52 * sizeof(int));
 	deck->pileSize = 0;
 
+	int turnNo = 0;
+	struct pile_struct *reward; 
 
-	while (1) {
-		struct pile_struct *reward = take_turn(&players[get_next_player(playerIndex, Nplayers)], deck);
-		if (reward != NULL) {
-			// Reward the current player
-			for (int i = 0; i < reward->pileSize; i++) {
-				players[playerIndex].hand[players[playerIndex].handSize] = reward->pile[i];	
-			}	
-			memset(reward->pile, 0, sizeof(int) * 52);
-			reward->pileSize = 0;
+	int finishLoop = false;
+
+	while (!finishLoop) {
+
+		if (players[playerIndex].handSize > 0) {
+
+			printf("Turn %d\n", turnNo);
+
+			// Debug printing the pile
+			printf("Pile: ");
+			for (int i = 0; i < deck->pileSize; i++) {
+				printf("%d, ", deck->pile[i]);	
+			}
+			printf("\n");
+
+			// Debug printing the hands of each player
+			for (int k = 0; k < Nplayers; k++) {
+				if (k == playerIndex) {
+					printf("*  %d: ", k);
+				}
+				else {
+					printf("   %d: ", k);
+				}
+				for (int n = 0; n < players[k].handSize; n++) {
+					printf("%d ", players[k].hand[n]);	
+				}
+				printf("\n");
+			}
+
+			reward = take_turn(&players[playerIndex], deck);
+
+			if (reward != NULL) {
+				// Obtain the previous player that's left with more than 0 cards 
+				int previousPlayerID = get_previous_player(playerIndex, Nplayers);
+				while (players[previousPlayerID].handSize == 0) {
+					previousPlayerID = get_previous_player(previousPlayerID, Nplayers);
+				}
+				for (int i = 0; i < reward->pileSize; i++) {
+					players[previousPlayerID].hand[players[previousPlayerID].handSize] = reward->pile[i];	
+					players[previousPlayerID].handSize += 1;
+				}	
+				memset(reward->pile, 0, sizeof(int) * 52);
+				reward->pileSize = 0;
+			}
+
+			// Actually increment playerindex
+			playerIndex = get_next_player(playerIndex, Nplayers);
+
+			// Increment turn
+			turnNo++;
+		}
+		else {
+			playerIndex = get_next_player(playerIndex, Nplayers);
 		}
 
-		// Actually increment playerindex
-		playerIndex = get_next_player(playerIndex, Nplayers);
-		printf("Current player index is: %d\n", playerIndex);
-
-		printf("Current deck is: ");
-		for (int i = 0; i < deck->pileSize; i++) {
-			printf("%d, ", deck->pile[i]);	
-		}
-		printf("\n");
+		finishLoop = finished(players, Nplayers); 
 	}
 
 	return 0;
@@ -188,5 +243,5 @@ int main(int argv, char* argc[])
 	cardPile->pile = deck;
 	cardPile->pileSize = 52;
 
-	beggar(3, cardPile, 1);
+	beggar(4, cardPile, 1);
 }
