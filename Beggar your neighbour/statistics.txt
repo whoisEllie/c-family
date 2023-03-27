@@ -1,0 +1,9 @@
+Statistics for 2 players:   Average: 195, Min: 34, Max: 796
+Statistics for 3 players:   Average: 226, Min: 51, Max: 1008
+Statistics for 4 players:   Average: 271, Min: 61, Max: 971
+Statistics for 5 players:   Average: 318, Min: 51, Max: 1288
+Statistics for 6 players:   Average: 303, Min: 70, Max: 1337
+Statistics for 7 players:   Average: 298, Min: 70, Max: 1134
+Statistics for 8 players:   Average: 312, Min: 76, Max: 952
+Statistics for 9 players:   Average: 308, Min: 57, Max: 1671
+Statistics for 10 players:   Average: 290, Min: 80, Max: 797

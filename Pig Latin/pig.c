@@ -9,6 +9,14 @@
 
 char vowels[6] = {'a', 'e', 'i', 'o', 'u', 'y'};
 
+/**
+ * Checks to see if the input character is a consonant
+ *
+ * @param firstTime Whether this is the first evaluation of the string, in which case we exclude y from the vowels list
+ * @param value The character that we are checking
+ *
+ * @return Whether the input character is a consonant or not
+ */
 bool isConsonant(bool firstTime, char *value)
 {
 	for (int i = 0; i < (!firstTime? 6 : 5); i++) {
@@ -19,6 +27,13 @@ bool isConsonant(bool firstTime, char *value)
 	return true;
 }
 
+/**
+ * Translates a word from english to Pig Latin
+ *
+ * @param word The word to translate
+ *
+ * @return The translated word
+ */
 char *pig (char *word)
 {
 		// Declaring our output string	
@@ -37,7 +52,7 @@ char *pig (char *word)
 				{
 					// If the current letter is a consonant and we are adding to our suffix (i.e., we have not yet hit a vowel)
 					if (addingToSuffix && isConsonant(firstRound, english)) 
-					{ 						
+					{
 						startsWithConsonant = true;
 						suffix[i] = *english;
 						i++;
@@ -49,8 +64,7 @@ char *pig (char *word)
 
 					firstRound = false;
         }
-    }   
-
+    }
 
 		if (startsWithConsonant) {
 			// adding our suffix on to our piglatin

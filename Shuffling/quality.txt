@@ -1,0 +1,18 @@
+By shuffle 1 the average quality is 0.700000
+By shuffle 2 the average quality is 0.540000
+By shuffle 3 the average quality is 0.500000
+By shuffle 4 the average quality is 0.460000
+By shuffle 5 the average quality is 0.420000
+By shuffle 6 the average quality is 0.540000
+By shuffle 7 the average quality is 0.500000
+By shuffle 8 the average quality is 0.580000
+By shuffle 9 the average quality is 0.480000
+By shuffle 10 the average quality is 0.500000
+By shuffle 11 the average quality is 0.500000
+By shuffle 12 the average quality is 0.540000
+By shuffle 13 the average quality is 0.480000
+By shuffle 14 the average quality is 0.480000
+By shuffle 15 the average quality is 0.480000
+The final average quality after 15 runs is 0.480000.
+
+In the above demonstration, we can see that already just 15 shuffles is getting us quite close to achieving our desired goal, that being a quality rating of 0.5. In fact, through our shuffling, we hit this exact goal a few times, first by shuffle 3, then by shuffle 7, and again by shuffles 10 and 11. This is a clear showing that as we add more shuffles to our average, we get closer and closer to the 0.5 goal. Mathematically, we could describe this average as being asympototic and trending towards 0.5. Even with millions of iterations, we would likely still be faltering just above and just below the 0.5 value, never fully reaching it. In practical purposes, our 15 shuffle average is close enough to 0.5 where it would not play a significant difference in our end result, and so we can say that we've achieved a good shuffle. 
